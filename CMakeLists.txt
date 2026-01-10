@@ -82,7 +82,11 @@ elseif(WIN32)
     )
 elseif(APPLE)
     set(BACKEND_SOURCES
-        # macOS backend files will go here
+        src/backend/macos/cpu_macos.cpp
+        src/backend/macos/ram_macos.cpp
+        src/backend/macos/gpu_macos.cpp
+        src/backend/macos/macos_backend.cpp
+        src/backend/macos/platform_factory.cpp
     )
 endif()
 
@@ -113,7 +117,11 @@ if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE RESMON_WINDOWS)
 elseif(APPLE)
     target_compile_definitions(${PROJECT_NAME} PRIVATE RESMON_MACOS)
-    target_link_libraries(${PROJECT_NAME} PRIVATE "-framework Cocoa" "-framework IOKit")
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreFoundation"
+    )
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE RESMON_LINUX)
     # Linux needs dl for dlopen (NVML runtime loading)
