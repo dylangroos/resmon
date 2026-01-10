@@ -1,0 +1,28 @@
+# Build directories
+build/
+cmake-build-*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Compiled
+*.o
+*.obj
+*.exe
+resmon
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# OS
+.DS_Store
+Thumbs.db
+imgui.ini
