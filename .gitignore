@@ -26,3 +26,7 @@ Makefile
 .DS_Store
 Thumbs.db
 imgui.ini
+
+# Local development
+.kanban/
+.claude/
