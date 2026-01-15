@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+
+      - name: Package
+        run: |
+          cd build
+          tar -czvf resmon-linux-x86_64.tar.gz resmon
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resmon-linux-x86_64
+          path: build/resmon-linux-x86_64.tar.gz
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Package
+        run: |
+          cd build
+          tar -czvf resmon-macos-arm64.tar.gz resmon
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resmon-macos-arm64
+          path: build/resmon-macos-arm64.tar.gz
+
+  build-macos-x64:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Package
+        run: |
+          cd build
+          tar -czvf resmon-macos-x86_64.tar.gz resmon
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resmon-macos-x86_64
+          path: build/resmon-macos-x86_64.tar.gz
+
+  release:
+    needs: [build-linux, build-macos, build-macos-x64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            resmon-linux-x86_64/resmon-linux-x86_64.tar.gz
+            resmon-macos-arm64/resmon-macos-arm64.tar.gz
+            resmon-macos-x86_64/resmon-macos-x86_64.tar.gz
+          generate_release_notes: true
