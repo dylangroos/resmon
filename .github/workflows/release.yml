@@ -44,6 +44,9 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j$(sysctl -n hw.ncpu)
 
+      - name: Sign binary
+        run: codesign -s - --force build/resmon
+
       - name: Package
         run: |
           cd build
@@ -65,6 +68,9 @@ jobs:
           mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j$(sysctl -n hw.ncpu)
+
+      - name: Sign binary
+        run: codesign -s - --force build/resmon
 
       - name: Package
         run: |
