@@ -20,6 +20,11 @@ tar -xzf resmon-*.tar.gz
 ./resmon
 ```
 
+**macOS users:** If you get a security warning, run this first:
+```bash
+xattr -d com.apple.quarantine resmon
+```
+
 ### Building from Source
 
 See [Building](#building) below.
